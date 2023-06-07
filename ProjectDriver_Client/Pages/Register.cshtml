@@ -1,0 +1,67 @@
+﻿@page
+@model ProjectDriver_Client.Pages.RegisterModel
+@{
+    ViewData["Title"] = "Registration";
+}
+
+<section class="overflow-auto" style="margin: !important; height:100% !important;">
+    <!-- Jumbotron -->
+    <div class="px-4 py-5 px-md-5 text-center text-lg-start" style="background-color: hsl(0, 0%, 96%); height:100vh;">
+        <div class="container">
+            <div class="row gx-lg-5 align-items-center">
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <h1 class="my-5 display-3 fw-bold ls-tight">
+                        The best solution <br />
+                        <span class="text-primary">for your traveling</span>
+                    </h1>
+                    <p style="color: hsl(217, 10%, 50.8%)">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Eveniet, itaque accusantium odio, soluta, corrupti aliquam
+                        quibusdam tempora at cupiditate quis eum maiores libero
+                        veritatis? Dicta facilis sint aliquid ipsum atque?
+                    </p>
+                </div>
+
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <div class="card">
+                        <div class="card-body py-5 px-md-5">
+                            <h2 class="h2 mb-4 text-primary fw-bold">Sign up</h2>
+                            <form method="post">
+                                <div class="row">
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-outline">
+                                            <input type="text" class="form-control" asp-for="Model.Name" required/>
+                                            <label class="form-label">First name</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="form-outline">
+                                            <input type="text" class="form-control" asp-for="Model.Surname" required />
+                                            <label class="form-label">Last name</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-outline mb-4">
+                                    <input type="tel" class="form-control" asp-for="Model.Number" required />
+                                    <label class="form-label">Number</label>
+                                </div>
+                                <div class="form-outline mb-4">
+                                    <input type="email" class="form-control" asp-for="Model.Email" required />
+                                    <label class="form-label">Email address</label>
+                                </div>
+                                <div class="form-outline mb-4">
+                                    <input type="password" class="form-control" asp-for="Model.Password" required />
+                                    <label class="form-label">Password</label>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block mb-4">
+                                    Sign up
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Jumbotron -->
+</section>
