@@ -3,32 +3,33 @@
 @{
     ViewData["Title"] = "Home";
 }
-<div class="home-title">
-    <h1 class="h-3 pt-5 text-light">Поиск попутчиков</h1>
-    <div class="container">
-        <div class="search-div d-sm-inline-flex align-content-center justify-content-center mb-5">
-            <div class="form-outline form-white m-2">
+<div class="home-title vh-100 align-items-center justify-content-center">
+    
+    <div class="container ">
+        <div class="d-sm-flex mb-3 search-div" style="height: 100vh; align-items:center; justify-content:center;">
+            <h1 class="text-light">Поиск попутчиков</h1>
+            <div class="form-outline form-white">
                 <input type="text" class="form-control" />
                 <label class="form-label" >Откуда</label>
             </div>
-            <div class="form-outline form-white m-2">
+            <div class="form-outline form-white">
                 <input type="text" class="form-control" />
                 <label class="form-label">Куда</label>
             </div>
-            <div class="form-outline form-white m-2 text-success">
+            <div class="form-outline form-white">
                 <input type="date" class="form-control" />
                 <label class="form-label">Когда</label>
             </div>
-            <div class="m-2">
+            <div>
                 <a class="btn btn-warning" asp-area="" asp-page="/Trips">Поехали!</a>
             </div>
         </div>
     </div>
 </div>
 
-<div class="container align-content-center align-items-center mt-5">
+<div class="container align-content-center align-items-center mt-5 overflow-hidden">
     <h3 class="h3 font-weight-bold text-center text-dark">Планируете поездку на машине ?</h3>
-    <div class="row justify-content-center text-center mt-5">
+    <div class="row justify-content-center text-center mt-5 ">
         <div class="col-6">
             <div style="background-image:url(/car.png);" class="homepage-images"></div>
             <h5 class="h5 font-weight-bold text-black">Экономьте на бензине</h5>
@@ -43,7 +44,7 @@
     <button type="button" class="btn align-self-center btn-outline-primary mt-5">Предложить поездку</button>
 </div>
 
-<div class="container justify-content-center text-black mt-5 mb-5" style="background: lightgray; padding:revert;">
+<div class="container justify-content-center text-black mt-5 mb-5 overflow-hidden" style="background: lightgray; padding:revert;">
     <h3 class="h3 font-weight-bold text-center pt-5">Хотите путешествовать с выгодой и комфортом?</h3>
     <h5 class="h5 font-weight-bold text-center">Мы создали BeepCar, чтобы помочь людям экономить в дороге</h5>
     <div class="row mt-5">
