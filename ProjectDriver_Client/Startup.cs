@@ -40,14 +40,6 @@ namespace ProjectDriver_Client
                     options.Cookie.Name = "auth_cookie";
                     options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
                     options.LoginPath = "/Login";
-                    options.Events = new CookieAuthenticationEvents
-                    {
-                        OnRedirectToLogin = redirectContext =>
-                        {
-                            redirectContext.HttpContext.Response.StatusCode = 401;
-                            return Task.CompletedTask;
-                        }
-                    };
                 });   
         }
        

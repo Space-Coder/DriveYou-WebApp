@@ -3,45 +3,49 @@
 @{
     ViewData["Title"] = "Home";
 }
-<div class="home-title vh-100 align-items-center justify-content-center">
-    
-    <div class="container ">
-        <div class="d-sm-flex mb-3 search-div" style="height: 100vh; align-items:center; justify-content:center;">
-            <h1 class="text-light">Поиск попутчиков</h1>
-            <div class="form-outline form-white">
-                <input type="text" class="form-control" />
-                <label class="form-label" >Откуда</label>
-            </div>
-            <div class="form-outline form-white">
-                <input type="text" class="form-control" />
-                <label class="form-label">Куда</label>
-            </div>
-            <div class="form-outline form-white">
-                <input type="date" class="form-control" />
-                <label class="form-label">Когда</label>
-            </div>
-            <div>
-                <a class="btn btn-warning" asp-area="" asp-page="/Trips">Поехали!</a>
-            </div>
-        </div>
+<div class="home-title vh-100">
+    <div class="container" style="max-width: 800px; padding-top: 100px; position:relative; margin: 0 auto !important;">
+            <form asp-page="Trips" asp-page-handler="Trips" method="get" class="flex-column search-div">
+                <div>
+                    <h1 class="text-light">Поиск попутчиков</h1>
+                </div>
+                <div class="d-sm-flex mx-auto m-auto p-2">
+                    <div class="form-outline form-white">
+                        <input type="text" class="form-control" name="From" />
+                        <label class="form-label">Откуда</label>
+                    </div>
+                    <div class="form-outline form-white">
+                        <input type="text" class="form-control" name="To" />
+                        <label class="form-label">Куда</label>
+                    </div>
+                    <div class="form-outline form-white">
+                        <input type="date" class="form-control" name="Date" />
+                        <label class="form-label">Когда</label>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-warning">Поехали!</button>
+                    </div>
+                </div>
+            </form>
     </div>
 </div>
 
-<div class="container align-content-center align-items-center mt-5 overflow-hidden">
+<div class="container justify-content-center mt-5 overflow-hidden">
     <h3 class="h3 font-weight-bold text-center text-dark">Планируете поездку на машине ?</h3>
     <div class="row justify-content-center text-center mt-5 ">
-        <div class="col-6">
+        <div class="col-sm-6">
             <div style="background-image:url(/car.png);" class="homepage-images"></div>
             <h5 class="h5 font-weight-bold text-black">Экономьте на бензине</h5>
             <p class="lead text-muted" style="font-size:small">Предложите поездку — пассажиры оплатят до 100% ваших дорожных расходов</p>
         </div>
-        <div class="col-6">
+        <div class="col-sm-6">
             <div style="background-image:url(/driver.png);" class="homepage-images"></div>
             <h5 class="h5 font-weight-bold text-black">Попутчики не дадут скуча­ть в пути</h5>
             <p class="lead text-muted" style="font-size:small">Совместные поездки — это отличный способ скоротать время в дороге в приятной компании</p>
         </div>
     </div>
-    <button type="button" class="btn align-self-center btn-outline-primary mt-5">Предложить поездку</button>
+        <button type="button" class="btn btn-outline-primary ">Предложить поездку</button>
+    
 </div>
 
 <div class="container justify-content-center text-black mt-5 mb-5 overflow-hidden" style="background: lightgray; padding:revert;">

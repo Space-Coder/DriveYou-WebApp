@@ -1,8 +1,65 @@
-﻿@page
+﻿@page "{handler?}"
 @model ProjectDriver_Client.Pages.TripsModel
 @{
     ViewData["Title"] = "Trips";
 }
 
+<div class="container" style="padding-top:30px; position:relative;">
+    @{
+        if (Model.TripsWithUser.Count > 0 && Model.TripsWithUser != null)
+        {
+            foreach (var item in Model.TripsWithUser)
+            {
+                int seatsFree = 0;
+                int age = DateTime.UtcNow.Year - item.Date.Year;
+                if (DateTime.UtcNow.DayOfYear < item.Date.DayOfYear)
+                {
+                    age++;
+                }
+                if (item.ScheduledTrips != null && item.SubscribedOnTrips != null)
+                {
+                    seatsFree = item.ScheduledTrips.Seats - item.SubscribedOnTrips.Count;
+                }
+                else if (item.ScheduledTrips != null)
+                {
+                    seatsFree = item.ScheduledTrips.Seats;
+                }
+                <a href="google.com" class="card d-flex flex-md-row flex-sm-column m-4 text-black" style="position:relative;">
+                    <div class="card-body">
+                        <h5 class="card-title">@String.Format("{0:MMMM dd, H:mm:ss}", item.ScheduledTrips.Date)</h5>
+                        <p class="lead text-muted">@String.Format("{0} - {1}", item.ScheduledTrips.From, item.ScheduledTrips.To)</p>
+                        <p class="card-text">@String.Format("Свободных мест {0} из {1}", seatsFree, item.ScheduledTrips.Seats)</p>
+                    </div>
+                    <div class="justify-content-end align-self-end mb-md-4 mb-0">
+                        @if (item.ScheduledTrips.IsSmoking == true)
+                        {
+                            <img src="https://placehold.co/40" />
+                        }
+                        @if (item.ScheduledTrips.IsAnimals == true)
+                        {
+                            <img src="https://placehold.co/40" />
+                        }
+                        @if (item.ScheduledTrips.IsBagage == true)
+                        {
+                            <img src="https://placehold.co/40" />
+                        }
+                    </div>
 
+                    <div class="vr mx-4 d-md-none d-sm-none d-lg-block" style="height: auto;"></div>
 
+                    <div class="d-flex mr-5 m-sm-4 m-4" style="justify-content:stretch; align-items:center; vertical-align:central; min-width:251px;">
+                        <img src="data:image/png;base64, @item.Photo" class="img-fluid" style="border-radius: 50%; height:75px; width:75px; max-height:75px; max-width:75px;" />
+                        <div class="flex-column ml-2">
+                            <h5 class="card-text">@String.Format("{0}, {1}", item.Name, age)</h5>
+                            <p class="card-text">@String.Format("{0}, {1}", item.CarMark, item.CarModel)</p>
+                        </div>
+                    </div>
+                </a>
+            }
+        }
+        else
+        {
+            <h1 class="display-1 text-center">No elements</h1>
+        }
+    }
+</div>

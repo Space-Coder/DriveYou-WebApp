@@ -41,7 +41,7 @@ namespace ProjectDriver_Client.Pages
             return null;
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPost()
         {
             if (ModelState.IsValid)
             {
