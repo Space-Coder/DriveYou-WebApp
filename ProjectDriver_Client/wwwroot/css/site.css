@@ -140,7 +140,7 @@ body {
     border-radius: 7px;
 }
 
-.card {
+.tripscard {
     position: relative;
     overflow: hidden;
     background: transparent;
@@ -149,7 +149,7 @@ body {
     transition: all 0.2s ease;
 }
 
-    .card:hover {
+    .tripscard:hover {
         transform: scale(1.05);
         box-shadow: 0px 0px 30px #1861aca7;
     }

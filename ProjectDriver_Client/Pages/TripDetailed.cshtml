@@ -1,4 +1,109 @@
 ﻿@page
 @model ProjectDriver_Client.Pages.TripDetailedModel
-@{
-}
+
+
+<div class="container" style="padding-top:30px; position:relative;">
+    @if (Model.TripModel != null)
+    {
+        int seatsFree = 0;
+        int age = DateTime.UtcNow.Year - Model.TripModel.Date.Year;
+        if (DateTime.UtcNow.DayOfYear < Model.TripModel.Date.DayOfYear)
+        {
+            age++;
+        }
+        if (Model.TripModel.ScheduledTrips != null && Model.TripModel.SubscribedOnTrips != null)
+        {
+            seatsFree = Model.TripModel.ScheduledTrips.Seats - Model.TripModel.SubscribedOnTrips.Count;
+        }
+        <div class="card d-flex m-4 flex-column position-relative">
+            <div class="d-flex flex-row  text-black" style="position:relative;">
+                <div class="card-body">
+                    <h3 class="h3">@String.Format("{0:MMMM dd, H:mm}", Model.TripModel.ScheduledTrips.Date)</h3>
+                    <p class="lead text-muted">@String.Format("{0} — {1}", Model.TripModel.ScheduledTrips.From, Model.TripModel.ScheduledTrips.To)</p>
+                    <p class="card-text">@String.Format("Свободных мест {0} из {1}", seatsFree, Model.TripModel.ScheduledTrips.Seats)</p>
+                </div>
+                <div class="align-self-start mt-4 mr-4">
+                    <h3 class="h3">@String.Format("{0} BYN", Model.TripModel.ScheduledTrips.Cost)</h3>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary mx-5">Subscribe</button>
+            <hr class="hr" />
+            <h5 class="font-weight-bold mx-4" style="text-decoration:underline; text-decoration-color: #006eccff; text-decoration-thickness: 3px;">Driver</h5>
+            <a href="google.com" class="d-flex mr-5 m-sm-4 m-4 text-black" style="justify-content:stretch; align-items:center; vertical-align:central; min-width:251px;">
+                <img src="data:image/png;base64, @Model.TripModel.Photo" class="img-fluid" style="border-radius: 50%; height:95px; width:95px; max-height:95px; max-width:95px;" />
+                <div class="flex-column ml-2">
+                    <h5 class="card-text">@String.Format("{0}, {1}", Model.TripModel.Name, age)</h5>
+                    <p class="card-text text-muted">@String.Format("{0}, {1}", Model.TripModel.CarMark, Model.TripModel.CarModel)</p>
+                </div>
+            </a>
+            <hr class="hr" />
+            <h5 class="font-weight-bold mx-4" style="text-decoration:underline; text-decoration-color: #006eccff; text-decoration-thickness: 3px;">Passangers</h5>
+            @if (Model.TripModel.SubscribedOnTrips.Count > 0)
+            {
+                foreach (var item in Model.TripModel.SubscribedOnTrips)
+                {
+                    int passangerAge = DateTime.UtcNow.Year - item.User.Date.Year;
+                    if (DateTime.UtcNow.DayOfYear < Model.TripModel.Date.DayOfYear)
+                    {
+                        passangerAge++;
+                    }
+                    <a href="google.com" class="d-flex mr-5 m-sm-4 m-4 text-black" style="justify-content:stretch; align-items:center; vertical-align:central; min-width:251px;">
+                        <img src="data:image/png;base64, @item.User.Photo" class="img-fluid" style="border-radius: 50%; height:75px; width:75px; max-height:75px; max-width:75px;" />
+                        <div class="flex-column ml-2">
+                            <h5 class="card-text">@String.Format("{0}, {1}", item.User.Name, passangerAge)</h5>
+                            <p class="card-text text-muted">@String.Format("{0} – {1}", Model.TripModel.ScheduledTrips.From, Model.TripModel.ScheduledTrips.To)</p>
+                        </div>
+                    </a>
+                }
+            }
+            else
+            {
+                <h4 class="h4 text-center m-auto">No passangers yet</h4>
+            }
+            <hr class="hr" />
+            <h5 class="font-weight-bold mx-4" style="text-decoration:underline; text-decoration-color: #006eccff; text-decoration-thickness: 3px;">Info</h5>
+            <h6 class="text-muted mx-4 mt-2">Comment from driver</h6>
+            <p class="mx-4">@Model.TripModel.ScheduledTrips.Comment</p>
+            <h6 class="text-muted mx-4">Additional</h6>
+            <div class="d-flex flex-row mx-4 mb-4">
+                @if (Model.TripModel.ScheduledTrips.IsSmoking)
+                {
+                    <span class="badge badge-primary mx-2">Smoking</span>
+                }
+                @if (Model.TripModel.ScheduledTrips.IsAnimals)
+                {
+                    <span class="badge badge-primary mx-2">Animals</span>
+                }
+                @if (Model.TripModel.ScheduledTrips.IsBagage)
+                {
+                    <span class="badge badge-primary mx-2">Big bagage</span>
+                }
+            </div>
+            <h6 class="text-muted mx-4">@String.Format("Car - {0} {1}", Model.TripModel.CarMark, Model.TripModel.CarModel)</h6>
+            <div class="text-center">
+                <img src="data:image/png;base64, @Model.TripModel.CarImage" class="shadow rounded mb-4" style="width: 70%; height:auto;" />
+            </div>
+        </div>
+    }
+    else
+    {
+        <h1 class="display-1 text-center m-auto">No elements for show</h1>
+    }
+
+
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Error</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">Error message</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -55,7 +55,7 @@ namespace ProjectDriver_Client.Pages
         }
 
         //Get user trips
-        public void GetMyTrips()
+        public void OnGetMyTrips()
         {
             if (ModelState.IsValid) 
             {
@@ -104,7 +104,7 @@ namespace ProjectDriver_Client.Pages
         }
 
         //Add new trip
-        public void PostNewTrip(ScheduledTripsModel newTripModel)
+        public void OnPostNewTrip(ScheduledTripsModel newTripModel)
         {
             if (ModelState.IsValid)
             {
@@ -125,7 +125,7 @@ namespace ProjectDriver_Client.Pages
 
 
         //Delete user trip by id
-        public void GetDelTtip(int id)
+        public void OnGetDelTtip(int id)
         {
             if (ModelState.IsValid)
             {
@@ -146,7 +146,7 @@ namespace ProjectDriver_Client.Pages
 
 
         //Subscribe on trip
-        public void GetSubOnTrip(int id)
+        public void OnGetSubOnTrip(int id)
         {
             if (ModelState.IsValid)
             {
@@ -172,7 +172,7 @@ namespace ProjectDriver_Client.Pages
         }
 
         //Unsubscribe from trip
-        public void GetUnsubOnTrip(int id)
+        public void OnGetUnsubOnTrip(int id)
         {
             if (ModelState.IsValid)
             {
@@ -192,7 +192,7 @@ namespace ProjectDriver_Client.Pages
 
         
         //User subscribed trips
-        public void GetSubscribed()
+        public void OnGetSubscribed()
         {
             if (ModelState.IsValid)
             {
@@ -212,7 +212,7 @@ namespace ProjectDriver_Client.Pages
                         ScheduledTripsModelID = s.ID
                     }).ToList();
 
-                    var result = context.ScheduledTrips.Where(u => u.ID == u.SubscribedOnTrips
+                    TripsWithUser = context.ScheduledTrips.Where(u => u.ID == u.SubscribedOnTrips
                     .Where(s => s.UserID == user)
                     .Select(t => t.ScheduledTripsModelID)
                     .FirstOrDefault() && u.SubscribedOnTrips
