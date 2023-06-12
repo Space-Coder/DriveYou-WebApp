@@ -24,17 +24,17 @@
                 {
                     seatsFree = item.ScheduledTrips.Seats;
                 }
-                <a href="google.com" class="card tripscard d-flex flex-md-row flex-sm-column m-4 text-black" style="position:relative;">
+                <a asp-page="TripDetailed" asp-route-id="@item.ScheduledTrips.ID" class="card tripscard d-flex flex-lg-row flex-md-column m-4 text-black" style="position:relative;">
                     <div class="card-body">
                         <h5 class="card-title">@String.Format("{0:MMMM dd, H:mm:ss}", item.ScheduledTrips.Date)</h5>
                         <p class="lead text-muted">@String.Format("{0} - {1}", item.ScheduledTrips.From, item.ScheduledTrips.To)</p>
                         <p class="card-text">@String.Format("Свободных мест {0} из {1}", seatsFree, item.ScheduledTrips.Seats)</p>
                     </div>
-                    <div class="d-flex flex-sm-row flex-md-column justify-content-between" style="min-width:128px;">
-                        <div class="align-self-end mt-md-4 ml-sm-4 ml-md-0">
+                    <div class="d-flex flex-md-row flex-lg-column justify-content-between" style="min-width:128px;">
+                        <div class="align-self-end mt-lg-4 ml-4 ml-lg-0">
                             <h5 class="card-title">@String.Format("{0} BYN", item.ScheduledTrips.Cost)</h5>
                         </div>
-                        <div class="align-self-end mb-md-4 mr-sm-4 mr-md-0">
+                        <div class="align-self-end mb-lg-4 mr-4 mr-lg-0">
                             @if (item.ScheduledTrips.IsSmoking == true)
                             {
                                 <img src="https://placehold.co/40" />

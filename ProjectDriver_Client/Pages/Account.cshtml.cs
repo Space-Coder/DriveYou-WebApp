@@ -23,13 +23,16 @@ namespace ProjectDriver_Client.Pages
             context = _context;
         }
 
-        public void OnGet(int id = 1)
+        public void OnGet(int id)
         {
             UserModel = context.Users.Where(u => u.ID == id)
-                .Include(u=>u.ScheduledTrips)
+                .Include(u => u.ScheduledTrips)
                 .Include(u => u.SubscribedOnTrips)
-                .Include(u => u.UserReviews)
                 .FirstOrDefault();
+
+            UserModel.UserReviews = context.UserReviews.Where(r => r.ToID == id)
+                .Include(u => u.User)
+                .ToList();
             EndedTripsCount = context.EndedTrips.Where(u => u.UserID == id).Count();
         }
     }

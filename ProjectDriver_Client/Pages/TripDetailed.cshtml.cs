@@ -19,7 +19,7 @@ namespace ProjectDriver_Client.Pages
             context = _context;
         }
 
-        public void OnGet(int id = 1)
+        public void OnGet(int id)
         {
             var subs = context.SubscribedOnTrips.Where(u => u.ScheduledTripsModelID == id).Join(context.Users,
                         s => s.UserID,
