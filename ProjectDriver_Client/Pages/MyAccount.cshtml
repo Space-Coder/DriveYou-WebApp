@@ -1,0 +1,83 @@
+﻿@page
+@model ProjectDriver_Client.Pages.MyAccountModel
+
+<div class="container position-relative" style="padding-top:30px;">
+    <div class="card">
+        @if (Model.UserModel != null)
+        {
+            <form method="post" class="m-5">
+                <h3 class="font-weight-bold mb-4" style="text-decoration:underline; text-decoration-color: #006eccff; text-decoration-thickness: 3px;">User info</h3>
+                <div class="d-flex flex-column flex-lg-row">
+                    <div class="form-outline mb-4">
+                        <input type="text" class="form-control" asp-for="UserModel.Name" required />
+                        <label class="form-label">Name</label>
+                    </div>
+                    <div class="form-outline mb-4 ml-lg-4">
+                        <input type="text" class="form-control" asp-for="UserModel.Surname" required />
+                        <label class="form-label">Surname</label>
+                    </div>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="date" class="form-control" asp-for="UserModel.Date" required />
+                    <label class="form-label">Date of birth</label>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="tel" class="form-control" asp-for="UserModel.Number" required />
+                    <label class="form-label">Number</label>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="email" class="form-control" asp-for="UserModel.Email" required />
+                    <label class="form-label">E-mail</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block m-auto mb-4 w-50">Save changes</button>
+            </form>
+            <hr class="hr"/>
+            <form method="post" class="m-5">
+                <h3 class="font-weight-bold mb-4" style="text-decoration:underline; text-decoration-color: #006eccff; text-decoration-thickness: 3px;">Change password</h3>
+                <div class="form-outline mb-4">
+                    <input type="password" class="form-control" required />
+                    <label class="form-label">Current password</label>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="password" class="form-control" asp-for="UserModel.CarModel" required />
+                    <label class="form-label">New password</label>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="password" class="form-control" asp-for="UserModel.CarModel" required />
+                    <label class="form-label">Repeat new password</label>
+                </div>
+                <button type="submit" class="btn btn-outline-secondary btn-block m-auto mb-4 w-50">Add car photo</button>
+
+                <button type="submit" class="btn btn-primary btn-block m-auto mb-4 w-50">Save changes</button>
+            </form>
+            <hr class="hr" />
+            <form method="post" class="m-5">
+                <h3 class="font-weight-bold mb-4" style="text-decoration:underline; text-decoration-color: #006eccff; text-decoration-thickness: 3px;">Car info</h3>
+                <div class="form-outline mb-4">
+                     <input type="text" class="form-control" asp-for="UserModel.CarMark" required />
+                     <label class="form-label">Car mark</label>
+                 </div>
+
+                 <div class="form-outline mb-4">
+                     <input type="text" class="form-control" asp-for="UserModel.CarModel" required />
+                     <label class="form-label" >Car model</label>
+                  </div>
+                <button type="submit" class="btn btn-outline-secondary btn-block m-auto mb-4 w-50">Add car photo</button>
+
+                <button type="submit" class="btn btn-primary btn-block m-auto mb-4 w-50">Save changes</button>
+            </form>
+        }
+        else
+        {
+            <h2 class="h2 text-center font-weight-bold m-5 p-5">No data to show</h2>
+        }
+    </div>
+
+
+</div>
