@@ -1,41 +1,49 @@
-﻿@page
+﻿@page "{handler?}"
 @model ProjectDriver_Client.Pages.MyAccountModel
 
 <div class="container position-relative" style="padding-top:30px;">
     <div class="card">
         @if (Model.UserModel != null)
         {
-            <form method="post" class="m-5">
+            <form method="post" asp-page-handler="User" enctype="multipart/form-data" class="m-5">
                 <h3 class="font-weight-bold mb-4" style="text-decoration:underline; text-decoration-color: #006eccff; text-decoration-thickness: 3px;">User info</h3>
+
+                <img src="data:image/png;base64, @Model.InputUserModel.Photo" class="rounded-circle mx-auto d-block mb-3" style="width:175px; height:175px;" />
+
+                <div class="form-outline mb-4">
+                    <input type="file" class="form-control" name="ImageFile" placeholder="Photo" />
+                </div>
                 <div class="d-flex flex-column flex-lg-row">
                     <div class="form-outline mb-4">
-                        <input type="text" class="form-control" asp-for="UserModel.Name" required />
+                        <input type="text" class="form-control" asp-route-model="@Model.UserModel" asp-for="InputUserModel.Name" required />
                         <label class="form-label">Name</label>
                     </div>
                     <div class="form-outline mb-4 ml-lg-4">
-                        <input type="text" class="form-control" asp-for="UserModel.Surname" required />
+                        <input type="text" class="form-control" asp-for="InputUserModel.Surname" required />
                         <label class="form-label">Surname</label>
                     </div>
                 </div>
-
+               
                 <div class="form-outline mb-4">
-                    <input type="date" class="form-control" asp-for="UserModel.Date" required />
+                    <input type="date" class="form-control" asp-for="InputUserModel.Date" required />
                     <label class="form-label">Date of birth</label>
                 </div>
 
                 <div class="form-outline mb-4">
-                    <input type="tel" class="form-control" asp-for="UserModel.Number" required />
+                    <input type="tel" class="form-control" asp-for="InputUserModel.Number" required />
                     <label class="form-label">Number</label>
                 </div>
 
                 <div class="form-outline mb-4">
-                    <input type="email" class="form-control" asp-for="UserModel.Email" required />
+                    <input type="email" id="emailvalidate" class="form-control validate" asp-for="InputUserModel.Email" required />
                     <label class="form-label">E-mail</label>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-block m-auto mb-4 w-50">Save changes</button>
+                <button type="submit" class="btn btn-primary btn-block m-auto mb-4">Save changes</button>
             </form>
-            <hr class="hr"/>
+
+            <hr class="hr" />
+            
             <form method="post" class="m-5">
                 <h3 class="font-weight-bold mb-4" style="text-decoration:underline; text-decoration-color: #006eccff; text-decoration-thickness: 3px;">Change password</h3>
                 <div class="form-outline mb-4">
@@ -44,34 +52,46 @@
                 </div>
 
                 <div class="form-outline mb-4">
-                    <input type="password" class="form-control" asp-for="UserModel.CarModel" required />
+                    <input type="password" class="form-control" asp-for="InputPasswordModel.Password" required />
                     <label class="form-label">New password</label>
                 </div>
 
                 <div class="form-outline mb-4">
-                    <input type="password" class="form-control" asp-for="UserModel.CarModel" required />
+                    <input type="password" class="form-control" asp-for="InputPasswordModel.Password" required />
                     <label class="form-label">Repeat new password</label>
                 </div>
-                <button type="submit" class="btn btn-outline-secondary btn-block m-auto mb-4 w-50">Add car photo</button>
-
                 <button type="submit" class="btn btn-primary btn-block m-auto mb-4 w-50">Save changes</button>
             </form>
+            
             <hr class="hr" />
-            <form method="post" class="m-5">
+            
+            <form method="post" asp-action="Car" enctype="multipart/form-data" class="m-5">
                 <h3 class="font-weight-bold mb-4" style="text-decoration:underline; text-decoration-color: #006eccff; text-decoration-thickness: 3px;">Car info</h3>
                 <div class="form-outline mb-4">
-                     <input type="text" class="form-control" asp-for="UserModel.CarMark" required />
-                     <label class="form-label">Car mark</label>
-                 </div>
+                    <input type="text" class="form-control" asp-for="InputCarModel.CarMark" required />
+                    <label class="form-label">Car mark</label>
+                </div>
 
-                 <div class="form-outline mb-4">
-                     <input type="text" class="form-control" asp-for="UserModel.CarModel" required />
-                     <label class="form-label" >Car model</label>
-                  </div>
-                <button type="submit" class="btn btn-outline-secondary btn-block m-auto mb-4 w-50">Add car photo</button>
+                <div class="form-outline mb-4">
+                    <input type="text" class="form-control" asp-for="InputCarModel.CarModel" required />
+                    <label class="form-label">Car model</label>
+                </div>
 
+                <div class="form-outline mb-4">
+                    <input type="file" class="form-control" name="ImageFile" placeholder="Photo" required />
+                </div>
+
+                <img class="img-thumbnail rounded mx-auto d-block mb-5" style="width:65%;" src="data:image/png;base64, @Model.UserModel.CarImage" />
+               
                 <button type="submit" class="btn btn-primary btn-block m-auto mb-4 w-50">Save changes</button>
             </form>
+            
+            <hr class="hr" />
+            
+            <div class="m-5 text-center">
+                <h3 class="font-weight-bold mb-4" style="text-decoration:underline; text-decoration-color: #006eccff; text-decoration-thickness: 3px;">Profile preview</h3>
+                <a class="btn btn-primary" asp-route-id="@Model.UserModel.ID" asp-page="Account">Show my profile</a>
+            </div>
         }
         else
         {

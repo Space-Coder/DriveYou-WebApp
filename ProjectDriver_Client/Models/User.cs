@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectDriver_Client.Pages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,6 +12,49 @@ namespace ProjectDriver_Client.Models
 {
     public class User
     {
+        public User() {}
+        public User(User copyModel)
+        {
+            ID = copyModel.ID;
+            Number = copyModel.Number;
+            Password = copyModel.Password;
+            Email = copyModel.Email;
+            Name = copyModel.Name;
+            Surname = copyModel.Surname;
+            Date = copyModel.Date;
+            Photo = copyModel.Photo;
+            Rating = copyModel.Rating;
+            CarMark = copyModel.CarMark;
+            CarModel = copyModel.CarModel;
+            CarImage = copyModel.CarImage;
+            ScheduledTrips = copyModel.ScheduledTrips;
+            EndedTrips = copyModel.EndedTrips;
+            UserReviews = copyModel.UserReviews;
+            SubscribedOnTrips = copyModel.SubscribedOnTrips;
+        }
+        /*    public User() { }
+            public User(InputUserModel userModel, InputPasswordModel passwordModel, InputCarModel carModel)
+            {
+                if (userModel != null)
+                {
+                    Number = userModel.Number;
+                    Email = userModel.Email;
+                    Name = userModel.Name;
+                    Surname = userModel.Surname;
+                    Date = userModel.Date;
+                    Photo = userModel.Photo;
+                }
+                if (passwordModel != null)
+                {
+                    Password = passwordModel.Password;
+                }
+                if (carModel != null)
+                {
+                    CarMark = carModel.CarMark;
+                    CarModel = carModel.CarModel;
+                    CarImage = carModel.CarImage;
+                }
+            }*/
         public int ID { get; set; }
         public long Number { get; set; }
         public string Password { get; set; }
