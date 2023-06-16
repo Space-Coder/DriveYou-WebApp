@@ -1,5 +1,5 @@
 ﻿@page
-@model ProjectDriver_Client.Pages.TripDetailedModel
+@model DriveYOU_WebClient.Pages.TripDetailedModel
 
 
 <div class="container" style="padding-top:30px; position:relative;">
@@ -26,7 +26,22 @@
                     <h3 class="h3">@String.Format("{0} BYN", Model.TripModel.ScheduledTrips.Cost)</h3>
                 </div>
             </div>
-            <button type="button" class="btn btn-primary mx-5">Subscribe</button>
+            @if (Model.IsTripOwner == true)
+            {
+                <a asp-page-handler="DelTrip" asp-route-id="@Model.TripModel.ScheduledTrips.ID" asp-page="TripDetailed" class="btn btn-danger mx-5" onclick="Test">Delete trip</a>
+            }
+            else
+            {
+                if (Model.IsSubscribed == true)
+                {
+                    <a asp-page-handler="UnsubscribeUser" asp-route-id="@Model.TripModel.ScheduledTrips.ID" asp-page="TripDetailed" class="btn btn-primary mx-5" onclick="Test">Unsubscribe</a>
+                }
+                else
+                {
+                    <a asp-page-handler="SubscribeUser" asp-route-id="@Model.TripModel.ScheduledTrips.ID" asp-page="TripDetailed" class="btn btn-primary mx-5" onclick="Test">Subscribe</a>
+                }
+                
+            }
             <hr class="hr" />
             <h5 class="font-weight-bold mx-4" style="text-decoration:underline; text-decoration-color: #006eccff; text-decoration-thickness: 3px;">Driver</h5>
             <a asp-page="Account" asp-route-id="@Model.TripModel.ID" class="d-flex mr-5 m-sm-4 m-4 text-black" style="justify-content:stretch; align-items:center; vertical-align:central; min-width:251px;">
@@ -89,20 +104,19 @@
     {
         <h1 class="display-1 text-center m-auto">No elements for show</h1>
     }
-
-
 </div>
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+<div class="modal fade" id="ModalWindow" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Error</h5>
                 <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">Error message</div>
+            <div class="modal-body">@Model.ErrorModel.Caption</div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <p class="lead">@Model.ErrorModel.Message</p>
+                <button type="button" class="btn btn-primary" data-mdb-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

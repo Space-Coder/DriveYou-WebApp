@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace ProjectDriver_Client.Pages.Response
+namespace DriveYOU_WebClient.Pages.Response
 {
     public class UnauthorizedModel : PageModel
     {

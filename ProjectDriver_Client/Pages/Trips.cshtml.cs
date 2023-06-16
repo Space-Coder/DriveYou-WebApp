@@ -1,3 +1,5 @@
+using DriveYOU_WebClient.Context;
+using DriveYOU_WebClient.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -5,31 +7,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProjectDriver_Client.Context;
-using ProjectDriver_Client.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectDriver_Client.Pages
+namespace DriveYOU_WebClient.Pages
 {
     [RequireHttps]
-    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     public class TripsModel : PageModel
     {
         [BindProperty]
-        public FindTripModel? FindTripModel { get; set; }
+        public FindTripModel FindTripModel { get; set; }
         [BindProperty]
         public List<ScheduledTripsWithUserModel> TripsWithUser { get; set; } = new List<ScheduledTripsWithUserModel>();
+        [BindProperty]
+        public Models.ErrorModel ErrorModel { get; set; }
 
         private readonly ILogger<TripsModel> logger;
         private ApplicationDbContext context;
-        public TripsModel(ILogger<TripsModel> _logger , ApplicationDbContext _context)
+        public TripsModel(ILogger<TripsModel> _logger, ApplicationDbContext _context)
         {
             logger = _logger;
             context = _context;
         }
-
-        //Get trip from search
         public void OnGetTrips(FindTripModel findTripModel)
         {
             if (ModelState.IsValid)
@@ -52,16 +51,20 @@ namespace ProjectDriver_Client.Pages
                               ScheduledTrips = s
                           }).ToList();
             }
+            else
+            {
+                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+            }
         }
 
         //Get user trips
         public void OnGetMyTrips()
         {
-            if (ModelState.IsValid) 
+            if (ModelState.IsValid)
             {
                 if (User.Identity.IsAuthenticated)
                 {
-                    var user =  context.Users.Where(u => u.Number == long.Parse(User.Identity.Name))
+                    var user = context.Users.Where(u => u.Number == long.Parse(User.Identity.Name))
                        .Select(i => i.ID)
                        .FirstOrDefault();
                     var tripsId = context.ScheduledTrips.Where(u => u.UserID == user).ToList();
@@ -98,8 +101,12 @@ namespace ProjectDriver_Client.Pages
                 }
                 else
                 {
-                    RedirectToPage("Login");
+                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
                 }
+            }
+            else
+            {
+                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
             }
         }
 
@@ -120,6 +127,14 @@ namespace ProjectDriver_Client.Pages
                     context.ScheduledTrips.Add(newTripModel);
                     context.SaveChanges();
                 }
+                else
+                {
+                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                }
+            }
+            else
+            {
+                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
             }
         }
 
@@ -131,8 +146,8 @@ namespace ProjectDriver_Client.Pages
             {
                 if (User.Identity.IsAuthenticated)
                 {
-                    var user =  context.Users.FirstOrDefault(u => u.Number == long.Parse(User.Identity.Name));
-                    var trip =  context.ScheduledTrips.Where(i => i.ID == id && i.UserID == user.ID).FirstOrDefault();
+                    var user = context.Users.FirstOrDefault(u => u.Number == long.Parse(User.Identity.Name));
+                    var trip = context.ScheduledTrips.Where(i => i.ID == id && i.UserID == user.ID).FirstOrDefault();
                     if (trip == null)
                     {
                         ModelState.AddModelError("", "Can't find trip for current user");
@@ -141,11 +156,18 @@ namespace ProjectDriver_Client.Pages
                     context.ScheduledTrips.Remove(trip);
                     context.SaveChangesAsync();
                 }
+                else
+                {
+                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                }
+            }
+            else
+            {
+                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
             }
         }
 
 
-        //Subscribe on trip
         public void OnGetSubOnTrip(int id)
         {
             if (ModelState.IsValid)
@@ -168,6 +190,14 @@ namespace ProjectDriver_Client.Pages
                     context.SubscribedOnTrips.Add(model);
                     context.SaveChanges();
                 }
+                else
+                {
+                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                }
+            }
+            else
+            {
+                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
             }
         }
 
@@ -187,10 +217,18 @@ namespace ProjectDriver_Client.Pages
                     context.SubscribedOnTrips.Remove(model);
                     context.SaveChanges();
                 }
+                else
+                {
+                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                }
+            }
+            else
+            {
+                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
             }
         }
 
-        
+
         //User subscribed trips
         public void OnGetSubscribed()
         {
@@ -238,12 +276,12 @@ namespace ProjectDriver_Client.Pages
                 }
                 else
                 {
-                    RedirectToPage("Login");
+                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
                 }
             }
             else
             {
-                ModelState.AddModelError("", "Model state is not valid");
+                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
             }
         }
     }

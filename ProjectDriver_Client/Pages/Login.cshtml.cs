@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using ProjectDriver_Client.Context;
-using ProjectDriver_Client.Models;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -12,15 +10,19 @@ using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using DriveYOU_WebClient.Context;
+using DriveYOU_WebClient.Models;
 
-namespace ProjectDriver_Client.Pages
+namespace DriveYOU_WebClient.Pages
 {
     [AllowAnonymous]
     [RequireHttps]
     public class LoginModel : PageModel
     {
         [BindProperty]
-        public Models.LoginModel? Model { get; set; }
+        public Models.LoginModel Model { get; set; }
+        [BindProperty]
+        public Models.ErrorModel ErrorModel { get; set; }
 
         private readonly ILogger<LoginModel> logger;
         private ApplicationDbContext context;
@@ -53,7 +55,7 @@ namespace ProjectDriver_Client.Pages
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Некоректные логин и(или) пароль");
+                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: Login or password is invalid");
                 }
             }
             return null;

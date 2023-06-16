@@ -1,5 +1,5 @@
 ﻿@page "{handler?}"
-@model ProjectDriver_Client.Pages.TripsModel
+@model DriveYOU_WebClient.Pages.TripsModel
 @{
     ViewData["Title"] = "Trips";
 }
@@ -37,15 +37,15 @@
                         <div class="align-self-end mb-lg-4 mr-4 mr-lg-0">
                             @if (item.ScheduledTrips.IsSmoking == true)
                             {
-                                <img src="~/smokingicon.png" />
+                                <img src="/images/smokingicon.png" />
                             }
                             @if (item.ScheduledTrips.IsAnimals == true)
                             {
-                                <img src="~/dogicon.png" />
+                                <img src="/images/dogicon.png" />
                             }
                             @if (item.ScheduledTrips.IsBagage == true)
                             {
-                                <img src="~/caseicon.png" />
+                                <img src="/images/caseicon.png" />
                             }
                         </div>
                     </div>
@@ -65,4 +65,20 @@
             <h1 class="display-1 text-center m-auto">No elements</h1>
         }
     }
+</div>
+
+<div class="modal fade" id="ModalWindow" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Error</h5>
+                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">@Model.ErrorModel.Caption</div>
+            <div class="modal-footer">
+                <p class="lead">@Model.ErrorModel.Message</p>
+                <button type="button" class="btn btn-primary" data-mdb-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>

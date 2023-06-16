@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ProjectDriver_Client.Models
+namespace DriveYOU_WebClient.Models
 {
     public class UserReviewModel
     {

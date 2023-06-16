@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ProjectDriver_Client.Models;
 using Microsoft.AspNetCore.Http;
+using DriveYOU_WebClient.Models;
 
-namespace ProjectDriver_Client.Context
+namespace DriveYOU_WebClient.Context
 {
     public class ApplicationDbContext : DbContext
     {
@@ -19,8 +19,8 @@ namespace ProjectDriver_Client.Context
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
             //Constructor
-           // Database.EnsureDeleted();
-           // Database.EnsureCreated();
+            // Database.EnsureDeleted();
+            // Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

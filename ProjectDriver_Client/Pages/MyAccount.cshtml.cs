@@ -1,3 +1,5 @@
+using DriveYOU_WebClient.Context;
+using DriveYOU_WebClient.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -5,8 +7,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
-using ProjectDriver_Client.Context;
-using ProjectDriver_Client.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
@@ -14,7 +14,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace ProjectDriver_Client.Pages
+namespace DriveYOU_WebClient.Pages
 {
     [BindProperties]
     public class MyAccountModel : PageModel
@@ -26,6 +26,7 @@ namespace ProjectDriver_Client.Pages
         public InputCarModel InputCarModel { get; set; }
         public int EndedTripsCount { get; set; }
         public IFormFile ImageFile { get; set; }
+        public Models.ErrorModel ErrorModel { get; set; }
 
         private readonly ILogger<MyAccountModel> logger;
         private ApplicationDbContext context;
@@ -48,16 +49,20 @@ namespace ProjectDriver_Client.Pages
                     InputPasswordModel = new InputPasswordModel(UserModel);
                     InputCarModel = new InputCarModel(UserModel);
 
-                    TempUserModel = new User(UserModel); 
+                    TempUserModel = new User(UserModel);
                 }
                 else
                 {
-                    ModelState.AddModelError("AuthException", "User is not authenticated");
+                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
                 }
+            }
+            else
+            {
+                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
             }
         }
 
-        public void OnPostUser(User model)
+        public void OnPostUser()
         {
             if (ModelState.IsValid)
             {
@@ -79,18 +84,21 @@ namespace ProjectDriver_Client.Pages
                     SetProperties(InputUserModel);
                     UserModel = TempUserModel;
 
-
-                    context.Update(UserModel);
+                    context.Users.Update(UserModel);
                     context.SaveChanges();
                 }
                 else
                 {
-                    ModelState.AddModelError("AuthException", "User is not authenticated");
+                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
                 }
+            }
+            else
+            {
+                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
             }
         }
 
-       
+
 
         public void OnPostPassword()
         {
@@ -98,8 +106,25 @@ namespace ProjectDriver_Client.Pages
             {
                 if (User.Identity.IsAuthenticated)
                 {
-                    //TODO: Change password logic
+                    if (InputPasswordModel.Password == TempUserModel.Password)
+                    {
+                        SetProperties(InputPasswordModel);
+                        context.Users.Update(TempUserModel);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("InvalidPassword", "Invalid current password");
+                        ErrorModel = new Models.ErrorModel("Data error", "Ivalid current password");
+                    }
                 }
+                else
+                {
+                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                }
+            }
+            else
+            {
+                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
             }
         }
 
@@ -109,7 +134,7 @@ namespace ProjectDriver_Client.Pages
             {
                 if (User.Identity.IsAuthenticated)
                 {
-                    if (this.ImageFile != null)
+                    if (ImageFile != null)
                     {
                         byte[] imageData = null;
                         using (var br = new BinaryReader(ImageFile.OpenReadStream()))
@@ -118,20 +143,25 @@ namespace ProjectDriver_Client.Pages
                         }
                         InputCarModel.CarImage = Convert.ToBase64String(imageData);
 
+                        SetProperties(InputCarModel);
+                        UserModel = TempUserModel;
                         context.Users.Update(UserModel);
                         context.SaveChanges();
                     }
                     else
                     {
-                        ModelState.AddModelError("CarImageRequired", "Please add car image");
+                        ErrorModel = new Models.ErrorModel("Car error", "Add car error: Please add car image");
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("AuthException", "User is not authenticated");
+                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
                 }
             }
-
+            else
+            {
+                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+            }
         }
 
         private void SetProperties(object objModel)
@@ -164,7 +194,7 @@ namespace ProjectDriver_Client.Pages
 
     public class InputUserModel
     {
-        public InputUserModel(){}
+        public InputUserModel() { }
         public InputUserModel(User baseModel)
         {
             Number = baseModel.Number;
@@ -184,7 +214,7 @@ namespace ProjectDriver_Client.Pages
 
     public class InputPasswordModel
     {
-        public InputPasswordModel(){}
+        public InputPasswordModel() { }
         public InputPasswordModel(User baseModel)
         {
             Password = baseModel.Password;
@@ -194,7 +224,7 @@ namespace ProjectDriver_Client.Pages
 
     public class InputCarModel
     {
-        public InputCarModel(){}
+        public InputCarModel() { }
         public InputCarModel(User baseModel)
         {
             CarMark = baseModel.CarMark;

@@ -1,12 +1,12 @@
+using DriveYOU_WebClient.Context;
+using DriveYOU_WebClient.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProjectDriver_Client.Context;
-using ProjectDriver_Client.Models;
 using System.Linq;
 
-namespace ProjectDriver_Client.Pages
+namespace DriveYOU_WebClient.Pages
 {
     public class AccountModel : PageModel
     {
@@ -14,6 +14,8 @@ namespace ProjectDriver_Client.Pages
         public User UserModel { get; set; }
         [BindProperty]
         public int EndedTripsCount { get; set; }
+        [BindProperty]
+        public Models.ErrorModel ErrorModel { get; set; }
 
         private readonly ILogger<AccountModel> logger;
         private ApplicationDbContext context;
@@ -25,15 +27,31 @@ namespace ProjectDriver_Client.Pages
 
         public void OnGet(int id)
         {
-            UserModel = context.Users.Where(u => u.ID == id)
+            if (ModelState.IsValid)
+            {
+                if (User.Identity.IsAuthenticated)
+                {
+                    UserModel = context.Users.Where(u => u.ID == id)
                 .Include(u => u.ScheduledTrips)
                 .Include(u => u.SubscribedOnTrips)
                 .FirstOrDefault();
-
-            UserModel.UserReviews = context.UserReviews.Where(r => r.ToID == id)
-                .Include(u => u.User)
-                .ToList();
-            EndedTripsCount = context.EndedTrips.Where(u => u.UserID == id).Count();
+                    if (UserModel != null)
+                    {
+                        UserModel.UserReviews = context.UserReviews.Where(r => r.ToID == id)
+                        .Include(u => u.User)
+                        .ToList();
+                    }
+                    EndedTripsCount = context.EndedTrips.Where(u => u.UserID == id).Count();
+                }
+                else
+                {
+                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                }
+            }
+            else
+            {
+                ErrorModel = new Models.ErrorModel("ModelState error", "ModelStat error: Model state is not valid");
+            }
         }
     }
 }

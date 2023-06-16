@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ProjectDriver_Client
+namespace DriveYOU_WebClient
 {
     public class Program
     {

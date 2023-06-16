@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectDriver_Client", "ProjectDriver_Client\ProjectDriver_Client.csproj", "{0D56F244-6A3E-4012-A23F-C1345C577850}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriveYou_WebClient", "ProjectDriver_Client\DriveYou_WebClient.csproj", "{0D56F244-6A3E-4012-A23F-C1345C577850}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

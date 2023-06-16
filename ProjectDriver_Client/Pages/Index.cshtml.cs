@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using DriveYOU_WebClient.Context;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,9 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using ProjectDriver_Client.Context;
-using ProjectDriver_Client.Controllers;
-using ProjectDriver_Client.Models;
+using DriveYOU_WebClient.Controllers;
+using DriveYOU_WebClient.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
@@ -19,7 +19,7 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace ProjectDriver_Client.Pages
+namespace DriveYOU_WebClient.Pages
 {
     [AllowAnonymous]
     [RequireHttps]
@@ -33,12 +33,5 @@ namespace ProjectDriver_Client.Pages
             _logger = logger;
             db = context;
         }
-
-        public void OnGet()
-        {
-
-        }
-       
-
     }
 }

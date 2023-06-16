@@ -1,3 +1,4 @@
+using DriveYOU_WebClient.Context;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,14 +8,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using ProjectDriver_Client.Context;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ProjectDriver_Client
+namespace DriveYOU_WebClient
 {
     public class Startup
     {
@@ -28,7 +28,7 @@ namespace ProjectDriver_Client
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-            
+
             string conn = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(conn));
 
@@ -40,9 +40,9 @@ namespace ProjectDriver_Client
                     options.Cookie.Name = "auth_cookie";
                     options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
                     options.LoginPath = "/Login";
-                });   
+                });
         }
-       
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

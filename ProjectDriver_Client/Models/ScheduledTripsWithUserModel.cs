@@ -7,11 +7,10 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace ProjectDriver_Client.Models
+namespace DriveYOU_WebClient.Models
 {
     public class ScheduledTripsWithUserModel
     {
-       
         public ScheduledTripsModel ScheduledTrips { get; set; }
         public int ID { get; set; }
         public long Number { get; set; }

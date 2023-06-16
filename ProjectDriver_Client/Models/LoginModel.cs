@@ -7,13 +7,13 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace ProjectDriver_Client.Models
+namespace DriveYOU_WebClient.Models
 {
     public class LoginModel
     {
-        [Required(ErrorMessage ="Number is required!")]
+        [Required(ErrorMessage = "Number is required!")]
         public long? Number { get; set; }
         [Required(ErrorMessage = "Password is required!")]
-        public string? Password { get; set; }
+        public string Password { get; set; }
     }
 }

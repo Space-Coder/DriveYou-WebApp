@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProjectDriver_Client.Pages;
+using DriveYOU_WebClient.Pages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,11 +8,11 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace ProjectDriver_Client.Models
+namespace DriveYOU_WebClient.Models
 {
     public class User
     {
-        public User() {}
+        public User() { }
         public User(User copyModel)
         {
             ID = copyModel.ID;

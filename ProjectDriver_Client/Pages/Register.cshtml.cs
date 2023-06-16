@@ -1,13 +1,13 @@
+using DriveYOU_WebClient.Context;
+using DriveYOU_WebClient.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using ProjectDriver_Client.Context;
-using ProjectDriver_Client.Models;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ProjectDriver_Client.Pages
+namespace DriveYOU_WebClient.Pages
 {
     [AllowAnonymous]
     [RequireHttps]
@@ -15,6 +15,8 @@ namespace ProjectDriver_Client.Pages
     {
         [BindProperty]
         public Models.RegisterModel Model { get; set; }
+        [BindProperty]
+        public Models.ErrorModel ErrorModel { get; set; }
 
         private readonly ILogger<RegisterModel> logger;
         private ApplicationDbContext context;
@@ -36,15 +38,17 @@ namespace ProjectDriver_Client.Pages
             return null;
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPostAsync()
         {
             if (ModelState.IsValid)
             {
                 User newUser = context.Users.FirstOrDefault(u => u.Number == Model.Number || u.Email == Model.Email);
-                if (newUser != null) 
+                if (newUser != null)
                 {
                     ModelState.AddModelError("Registration", "User already registered");
-                }else
+                    ErrorModel = new Models.ErrorModel("Registration error", "Registration error: User already registered");
+                }
+                else
                 {
                     context.Users.Add(
                         new User()
@@ -55,10 +59,14 @@ namespace ProjectDriver_Client.Pages
                             Name = Model.Name,
                             Surname = Model.Surname,
                         });
-                    await context.SaveChangesAsync();
+                    context.SaveChanges();
                     logger.LogInformation("User {0} / {1} sucessfully registered", Model.Email, Model.Number);
                     return RedirectToPage("/Home");
                 }
+            }
+            else
+            {
+                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
             }
             return null;
         }
