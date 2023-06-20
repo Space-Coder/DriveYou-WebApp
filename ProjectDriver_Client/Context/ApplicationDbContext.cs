@@ -26,14 +26,9 @@ namespace DriveYOU_WebClient.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
-                .Property(p => p.ID)
-                .ValueGeneratedNever();
-
-            modelBuilder.Entity<User>()
                 .HasIndex(u => u.Number).IsUnique();
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email).IsUnique();
-
         }
     }
 }

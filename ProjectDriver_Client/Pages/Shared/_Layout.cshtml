@@ -50,6 +50,9 @@
                             <li class="nav-item active">
                                 <a class="nav-link" asp-area="" asp-page="MyAccount">@User.Identity.Name</a>
                             </li>
+                            <li>
+                                <a class="btn btn-primary btn-danger" asp-page="CreateTrip">Add trip</a>
+                            </li>
                         }else
                         {
                             <li class="nav-item active">
@@ -70,7 +73,7 @@
         </main>
     </div>
 
-    <footer class="d-flex flex-wrap justify-content-center align-items-center py-3 my-4 border-top" style="position:relative; ">
+    <!--<footer class="d-flex flex-wrap justify-content-center align-items-center py-3 my-4 border-top" style="position:relative; ">
       
         
         <div class="text-center p-3">
@@ -79,7 +82,7 @@
         </div>
         
        
-    </footer>
+    </footer> -->
 
 
     <script src="/lib/jquery/dist/jquery.min.js"></script>

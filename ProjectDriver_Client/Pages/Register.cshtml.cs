@@ -32,7 +32,7 @@ namespace DriveYOU_WebClient.Pages
             {
                 if (User.Identity.IsAuthenticated)
                 {
-                    return RedirectToPage("/Home");
+                    return RedirectToPage("/Index");
                 }
             }
             return null;
@@ -61,7 +61,7 @@ namespace DriveYOU_WebClient.Pages
                         });
                     context.SaveChanges();
                     logger.LogInformation("User {0} / {1} sucessfully registered", Model.Email, Model.Number);
-                    return RedirectToPage("/Home");
+                    return RedirectToPage("/Login");
                 }
             }
             else

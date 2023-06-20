@@ -1,70 +1,91 @@
 ﻿@page
 @model DriveYOU_WebClient.Pages.CreateTripModel
 
-<div class="container position-relative" style="padding-top:30px;">
-    <div class="card">
-        <form method="post" class="m-5">
-            <h3 class="font-weight-bold mb-4" style="text-decoration:underline; text-decoration-color: #006eccff; text-decoration-thickness: 3px;">Add trip</h3>
-            <div class="d-flex flex-column flex-lg-row">
+@if (Model.TripModel == null)
+{
+    Model.TripModel = new();
+    var currentDateTime = DateTime.UtcNow;
+    DateTime time = new DateTime(currentDateTime.Year, currentDateTime.Month, currentDateTime.Day, currentDateTime.Hour, currentDateTime.Minute, 0);
+    Model.TripModel.Date = time;
+}
+@if (Model.isHaveCar == true)
+{
+    <div class="container position-relative" style="padding-top:30px;">
+        <div class="card">
+            <form method="post" class="m-5">
+                <h3 class="font-weight-bold mb-4" style="text-decoration:underline; text-decoration-color: #006eccff; text-decoration-thickness: 3px;">Add trip</h3>
+                <div class="d-flex flex-column flex-lg-row">
+                    <div class="form-outline mb-4">
+                        <input type="text" class="form-control" asp-for="TripModel.From" />
+                        <label class="form-label">From</label>
+                    </div>
+                    <div class="form-outline mb-4 ml-lg-4">
+                        <input type="text" class="form-control" asp-for="TripModel.To" />
+                        <label class="form-label">To</label>
+                    </div>
+                </div>
+
                 <div class="form-outline mb-4">
-                    <input type="text" class="form-control" asp-for="TripModel.From" />
-                    <label class="form-label">From</label>
+                    <input type="datetime-local" class="form-control" asp-for="TripModel.Date" />
                 </div>
-                <div class="form-outline mb-4 ml-lg-4">
-                    <input type="text" class="form-control" asp-for="TripModel.To" />
-                    <label class="form-label">To</label>
+
+                <div class="form-outline mb-4">
+                    <input type="number" class="form-control" asp-for="TripModel.Seats" />
+                    <label class="form-label">Seats count</label>
                 </div>
-            </div>
 
-            <div class="form-outline mb-4">
-                <input type="datetime-local" class="form-control" asp-for="TripModel.Date" />
-            </div>
+                <div class="form-outline mb-4">
+                    <input type="text" class="form-control" asp-for="TripModel.Cost" />
+                    <label class="form-label">Cost</label>
+                </div>
 
-            <div class="form-outline mb-4">
-                <input type="number" class="form-control" asp-for="TripModel.Seats" />
-                <label class="form-label">Seats count</label>
-            </div>
+                <div class="form-outline mb-4">
+                    <textarea class="form-control" rows="4" asp-for="TripModel.Comment"></textarea>
+                    <label class="form-label">Comment</label>
+                </div>
 
-            <div class="form-outline mb-4">
-                <input type="text" class="form-control" asp-for="TripModel.Cost" />
-                <label class="form-label">Cost</label>
-            </div>
+                <div class="form-check d-flex mb-4">
+                    <input class="form-check-input me-2" type="checkbox" value="@Model.TripModel.IsSmoking" asp-for="TripModel.IsSmoking" />
+                    <label class="form-check-label">Smoking</label>
+                </div>
+                <div class="form-check d-flex mb-4">
+                    <input class="form-check-input me-2" type="checkbox" value="@Model.TripModel.IsAnimals" asp-for="TripModel.IsAnimals" />
+                    <label class="form-check-label">With animals</label>
+                </div>
+                <div class="form-check d-flex mb-4">
+                    <input class="form-check-input me-2" type="checkbox" value="@Model.TripModel.IsBagage" asp-for="TripModel.IsBagage" />
+                    <label class="form-check-label">Big bagage</label>
+                </div>
 
-            <div class="form-outline mb-4">
-                <textarea class="form-control" rows="4" asp-for="TripModel.Comment"></textarea>
-                <label class="form-label">Comment</label>
-            </div>
-
-            <div class="form-check d-flex mb-4">
-                <input class="form-check-input me-2" type="checkbox" value="" asp-for="TripModel.IsSmoking" />
-                <label class="form-check-label">Smoking</label>
-            </div>
-            <div class="form-check d-flex mb-4">
-                <input class="form-check-input me-2" type="checkbox" value="" asp-for="TripModel.IsAnimals" />
-                <label class="form-check-label">With animals</label>
-            </div>
-            <div class="form-check d-flex mb-4">
-                <input class="form-check-input me-2" type="checkbox" value="" asp-for="TripModel.IsBagage" />
-                <label class="form-check-label">Big bagage</label>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-block mb-4">Add trip</button>
-        </form>
+                <button type="submit" class="btn btn-primary btn-block mb-4">Add trip</button>
+            </form>
+        </div>
     </div>
-</div>
+}else
+{
+    <div class="container position-fixed" style="padding-top:30px;">
+        <div class="card">
+            <h3 class="h3 text-center">You don't have a car</h3>
+            <p class="lead">Please add car info in your account first</p>
+        </div>
+    </div>
+}
 
-<div class="modal fade" id="ModalWindow" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Error</h5>
-                <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">@Model.ErrorModel.Caption</div>
-            <div class="modal-footer">
-                <p class="lead">@Model.ErrorModel.Message</p>
-                <button type="button" class="btn btn-primary" data-mdb-dismiss="modal">Close</button>
+@if (Model.ErrorModel != null)
+{
+    <div class="modal fade" id="ModalWindow" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Error</h5>
+                    <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">@Model.ErrorModel.Caption</div>
+                <div class="modal-footer">
+                    <p class="lead">@Model.ErrorModel.Message</p>
+                    <button type="button" class="btn btn-primary" data-mdb-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+}

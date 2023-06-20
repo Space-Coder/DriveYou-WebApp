@@ -63,6 +63,8 @@ namespace DriveYOU_WebClient
             app.UseAuthorization();
             app.UseAuthentication();
 
+            app.UseStatusCodePages();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();

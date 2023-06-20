@@ -108,12 +108,19 @@ namespace DriveYOU_WebClient.Pages
                 {
                     if (InputPasswordModel.Password == TempUserModel.Password)
                     {
-                        SetProperties(InputPasswordModel);
-                        context.Users.Update(TempUserModel);
+                        if (InputPasswordModel.NewPassword == InputPasswordModel.ConfirmPassword)
+                        {
+                            SetProperties(InputPasswordModel);
+                            context.Users.Update(TempUserModel);
+                        }
+                        else
+                        {
+                            ErrorModel = new Models.ErrorModel("New password", "New password and confirm are not mathed");
+                        }
+                        
                     }
                     else
                     {
-                        ModelState.AddModelError("InvalidPassword", "Invalid current password");
                         ErrorModel = new Models.ErrorModel("Data error", "Ivalid current password");
                     }
                 }
@@ -220,6 +227,8 @@ namespace DriveYOU_WebClient.Pages
             Password = baseModel.Password;
         }
         public string Password { get; set; }
+        public string NewPassword { get; set; }
+        public string ConfirmPassword { get; set; }
     }
 
     public class InputCarModel

@@ -65,7 +65,7 @@
             
             <hr class="hr" />
             
-            <form method="post" asp-action="Car" enctype="multipart/form-data" class="m-5">
+            <form method="post" asp-page-handler="Car" enctype="multipart/form-data" class="m-5">
                 <h3 class="font-weight-bold mb-4" style="text-decoration:underline; text-decoration-color: #006eccff; text-decoration-thickness: 3px;">Car info</h3>
                 <div class="form-outline mb-4">
                     <input type="text" class="form-control" asp-for="InputCarModel.CarMark" required />
@@ -100,7 +100,9 @@
     </div>
 </div>
 
-<div class="modal fade" id="ModalWindow" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+@if (Model.ErrorModel != null)
+{
+    <div class="modal fade" id="ModalWindow" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -115,3 +117,4 @@
         </div>
     </div>
 </div>
+}
