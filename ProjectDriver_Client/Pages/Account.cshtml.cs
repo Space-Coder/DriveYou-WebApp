@@ -1,5 +1,7 @@
 using DriveYOU_WebClient.Context;
 using DriveYOU_WebClient.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +10,7 @@ using System.Linq;
 
 namespace DriveYOU_WebClient.Pages
 {
+    [RequireHttps]
     public class AccountModel : PageModel
     {
         [BindProperty]
@@ -15,7 +18,7 @@ namespace DriveYOU_WebClient.Pages
         [BindProperty]
         public int EndedTripsCount { get; set; }
         [BindProperty]
-        public Models.ErrorModel ErrorModel { get; set; }
+        public Models.MessageModel MessageModel { get; set; }
 
         private readonly ILogger<AccountModel> logger;
         private ApplicationDbContext context;
@@ -25,7 +28,7 @@ namespace DriveYOU_WebClient.Pages
             context = _context;
         }
 
-        public void OnGet(int id)
+        public IActionResult OnGet(int id)
         {
             if (ModelState.IsValid)
             {
@@ -45,13 +48,15 @@ namespace DriveYOU_WebClient.Pages
                 }
                 else
                 {
-                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                    MessageModel = new Models.MessageModel("Authentication error", "Authentication error: User not authenticated");
+                    return RedirectToPage("Login");
                 }
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("ModelState error", "ModelStat error: Model state is not valid");
+                MessageModel = new Models.MessageModel("ModelState error", "ModelStat error: Model state is not valid");
             }
+            return Page();
         }
     }
 }

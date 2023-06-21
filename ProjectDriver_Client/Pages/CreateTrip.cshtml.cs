@@ -1,12 +1,16 @@
 using DriveYOU_WebClient.Context;
 using DriveYOU_WebClient.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DriveYOU_WebClient.Pages
 {
+    [RequireHttps]
     public class CreateTripModel : PageModel
     {
         [BindProperty]
@@ -14,7 +18,7 @@ namespace DriveYOU_WebClient.Pages
         [BindProperty]
         public ScheduledTripsModel TripModel { get; set; }
         [BindProperty]
-        public Models.ErrorModel ErrorModel { get; set; }
+        public Models.MessageModel MessageModel { get; set; }
         private readonly ILogger<CreateTripModel> logger;
         private ApplicationDbContext context;
         public CreateTripModel(ILogger<CreateTripModel> _logger, ApplicationDbContext _context)
@@ -23,7 +27,7 @@ namespace DriveYOU_WebClient.Pages
             context = _context;
         }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
             if (ModelState.IsValid)
             {
@@ -32,25 +36,30 @@ namespace DriveYOU_WebClient.Pages
                     var user = context.Users.Where(u => u.Number == long.Parse(User.Identity.Name)).FirstOrDefault();
                     if (user != null) 
                     {
-                        if (string.IsNullOrEmpty(user.CarMark))
+                        if (!string.IsNullOrEmpty(user.CarMark))
                         {
                             isHaveCar = true;
                         }
                         else
                         {
                             isHaveCar = false;
-                            ErrorModel = new Models.ErrorModel("CarException", "User has no car, please add car info");
+                            MessageModel = new Models.MessageModel("CarException", "User has no car, please add car info");
                         }
                     }
                     else
                     {
-                        ErrorModel = new Models.ErrorModel("ArgumentNullException", "User not fount");
+                        MessageModel = new Models.MessageModel("ArgumentNullException", "User not fount");
                     }
                 }
+                else
+                {
+                    MessageModel = new Models.MessageModel("ArgumentNullException", "User not fount");
+                }
             }
+            return Page();
         }
 
-        public void OnPost()
+        public IActionResult OnPost()
         {
             if (ModelState.IsValid)
             {
@@ -63,16 +72,18 @@ namespace DriveYOU_WebClient.Pages
                     TripModel.UserID = currentUser.ID;
                     context.ScheduledTrips.Add(TripModel);
                     context.SaveChanges();
+                    return RedirectToPage("Trips", "MyTrips");
                 }
                 else
                 {
-                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                    MessageModel = new Models.MessageModel("Authentication error", "Authentication error: User not authenticated");
                 }
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("Model error", "Model error: Model state is invalid");
+                MessageModel = new Models.MessageModel("Model error", "Model error: Model state is invalid");
             }
+            return Page();
         }
     }
 }

@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using DriveYOU_WebClient.Controllers;
 using DriveYOU_WebClient.Models;
 using System;
 using System.Collections.Generic;

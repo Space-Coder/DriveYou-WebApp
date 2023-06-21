@@ -9,8 +9,10 @@ using System.Linq;
 
 namespace DriveYOU_WebClient.Pages
 {
+    [RequireHttps]
     public class TripDetailedModel : PageModel
     {
+        private ScheduledTripsWithUserModel TempTripModel { get; set; }
         [BindProperty]
         public ScheduledTripsWithUserModel TripModel { get; set; }
         [BindProperty]
@@ -20,7 +22,7 @@ namespace DriveYOU_WebClient.Pages
         [BindProperty]
         public bool IsSubscribed { get; set; }
         [BindProperty]
-        public Models.ErrorModel ErrorModel { get; set; }
+        public Models.MessageModel MessageModel { get; set; }
 
         private readonly ILogger<TripDetailedModel> logger;
         private ApplicationDbContext context;
@@ -30,59 +32,68 @@ namespace DriveYOU_WebClient.Pages
             context = _context;
         }
 
-        public void OnGet(int id)
+        public IActionResult OnGet(int id)
         {
             if (ModelState.IsValid)
             {
-                var subs = context.SubscribedOnTrips.Where(u => u.ScheduledTripsModelID == id).Join(context.Users,
+                if (User.Identity.IsAuthenticated)
+                {
+                    var subs = context.SubscribedOnTrips.Where(u => u.ScheduledTripsModelID == id).Join(context.Users,
+                       s => s.UserID,
+                       u => u.ID,
+                   (s, u) => new SubscribedOnTripsModel()
+                   {
+                       ID = s.ID,
+                       User = u,
+                       UserID = s.UserID,
+                       ScheduledTripsModelID = s.ID
+                   }).ToList();
+
+                    TripModel = context.ScheduledTrips.Where(t => t.ID == id)
+                        .Join(context.Users,
                         s => s.UserID,
                         u => u.ID,
-                    (s, u) => new SubscribedOnTripsModel()
+                        (s, u) => new ScheduledTripsWithUserModel()
+                        {
+                            ID = u.ID,
+                            Number = u.Number,
+                            Name = u.Name,
+                            Date = u.Date,
+                            Photo = u.Photo,
+                            Rating = u.Rating,
+                            CarMark = u.CarMark,
+                            CarModel = u.CarModel,
+                            CarImage = u.CarImage,
+                            ScheduledTrips = s,
+                            SubscribedOnTrips = subs
+                        }).FirstOrDefault();
+
+
+
+                    var user = context.Users.Where(u => u.Number == long.Parse(User.Identity.Name)).FirstOrDefault();
+                    var sub = context.SubscribedOnTrips.Where(t => t.ScheduledTripsModelID == id && t.UserID == user.ID).FirstOrDefault();
+                    IsSubscribed = sub != null ? true : false;
+                    if (user != null)
                     {
-                        ID = s.ID,
-                        User = u,
-                        UserID = s.UserID,
-                        ScheduledTripsModelID = s.ID
-                    }).ToList();
-
-                TripModel = context.ScheduledTrips.Where(t => t.ID == id)
-                    .Join(context.Users,
-                    s => s.UserID,
-                    u => u.ID,
-                    (s, u) => new ScheduledTripsWithUserModel()
-                    {
-                        ID = u.ID,
-                        Number = u.Number,
-                        Name = u.Name,
-                        Date = u.Date,
-                        Photo = u.Photo,
-                        Rating = u.Rating,
-                        CarMark = u.CarMark,
-                        CarModel = u.CarModel,
-                        CarImage = u.CarImage,
-                        ScheduledTrips = s,
-                        SubscribedOnTrips = subs
-                    }).FirstOrDefault();
-
-
-
-                var user = context.Users.Where(u => u.Number == long.Parse(User.Identity.Name)).FirstOrDefault();
-                var sub = context.SubscribedOnTrips.Where(t => t.ScheduledTripsModelID == id && t.UserID == user.ID).FirstOrDefault();
-                IsSubscribed = sub != null ? true : false;
-                if (user != null)
-                {
-                    IsTripOwner = context.ScheduledTrips.Where(t => t.ID == id).FirstOrDefault().UserID == user.ID ? true : false;
-                    UserID = user.ID;
+                        IsTripOwner = context.ScheduledTrips.Where(t => t.ID == id).FirstOrDefault().UserID == user.ID ? true : false;
+                        UserID = user.ID;
+                    }
                 }
+                else
+                {
+                    return RedirectToPage("Login");
+                }
+               
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+                MessageModel = new Models.MessageModel("Model error", "ModelState is not valid");
             }
+            return Page();
         }
 
 
-        public void OnGetSubscribeUser(int id)
+        public IActionResult OnGetSubscribeUser(int id)
         {
             if (ModelState.IsValid)
             {
@@ -96,19 +107,21 @@ namespace DriveYOU_WebClient.Pages
                     };
                     context.SubscribedOnTrips.Add(tripSubModel);
                     context.SaveChanges();
+                    return Redirect($"TripDetailed?id={id}");
                 }
                 else
                 {
-                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                    MessageModel = new Models.MessageModel("Authentication error", "Authentication error: User not authenticated");
                 }
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+                MessageModel = new Models.MessageModel("Model error", "ModelState is not valid");
             }
+            return Page();
         }
 
-        public void OnGetUnsubscribeUser(int id)
+        public IActionResult OnGetUnsubscribeUser(int id)
         {
             if (ModelState.IsValid)
             {
@@ -118,15 +131,17 @@ namespace DriveYOU_WebClient.Pages
                     var tripToUnsub = context.SubscribedOnTrips.FirstOrDefault(t => t.UserID == user.ID && t.ScheduledTripsModelID == id);
                     context.SubscribedOnTrips.Remove(tripToUnsub);
                     context.SaveChanges();
+                    return Redirect($"TripDetailed?id={id}");
                 }
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+                MessageModel = new Models.MessageModel("Model error", "ModelState is not valid");
             }
+            return Page();
         }
 
-        public void OnGetDelTrip(int id)
+        public IActionResult OnGetDelTrip(int id)
         {
             if (ModelState.IsValid)
             {
@@ -135,12 +150,14 @@ namespace DriveYOU_WebClient.Pages
                     var tripToDelete = context.ScheduledTrips.Where(u => u.ID == id).FirstOrDefault();
                     context.ScheduledTrips.Remove(tripToDelete);
                     context.SaveChanges();
+                    return RedirectToPage("Trips", "MyTrip");
                 }
                 else
                 {
-                    ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+                    MessageModel = new Models.MessageModel("Model error", "ModelState is not valid");
                 }
             }
+            return Page();
         }
     }
 }

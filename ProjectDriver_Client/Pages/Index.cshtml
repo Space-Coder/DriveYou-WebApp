@@ -5,28 +5,28 @@
 }
 <div class="home-title vh-100">
     <div class="container" style="max-width: 800px; padding-top: 100px; position:relative; margin: 0 auto !important;">
-            <form asp-page="Trips" asp-page-handler="Trips" method="get" class="flex-column search-div">
+        <form asp-page="Trips" asp-page-handler="Trips" method="get" class="flex-column search-div">
+            <div>
+                <h1 class="text-light">Поиск попутчиков</h1>
+            </div>
+            <div class="d-sm-flex mx-auto m-auto p-2">
+                <div class="form-outline form-white">
+                    <input type="text" class="form-control" name="From" />
+                    <label class="form-label">Откуда</label>
+                </div>
+                <div class="form-outline form-white">
+                    <input type="text" class="form-control" name="To" />
+                    <label class="form-label">Куда</label>
+                </div>
+                <div class="form-outline form-white">
+                    <input type="date" class="form-control" name="Date" />
+                    <label class="form-label">Когда</label>
+                </div>
                 <div>
-                    <h1 class="text-light">Поиск попутчиков</h1>
+                    <button type="submit" class="btn btn-warning">Поехали!</button>
                 </div>
-                <div class="d-sm-flex mx-auto m-auto p-2">
-                    <div class="form-outline form-white">
-                        <input type="text" class="form-control" name="From" />
-                        <label class="form-label">Откуда</label>
-                    </div>
-                    <div class="form-outline form-white">
-                        <input type="text" class="form-control" name="To" />
-                        <label class="form-label">Куда</label>
-                    </div>
-                    <div class="form-outline form-white">
-                        <input type="date" class="form-control" name="Date" />
-                        <label class="form-label">Когда</label>
-                    </div>
-                    <div>
-                        <button type="submit" class="btn btn-warning">Поехали!</button>
-                    </div>
-                </div>
-            </form>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -44,8 +44,6 @@
             <p class="lead text-muted" style="font-size:small">Совместные поездки — это отличный способ скоротать время в дороге в приятной компании</p>
         </div>
     </div>
-        <button type="button" class="btn btn-outline-primary ">Предложить поездку</button>
-    
 </div>
 
 <div class="container justify-content-center text-black mt-5 mb-5 overflow-hidden" style="background: lightgray; padding:revert;">

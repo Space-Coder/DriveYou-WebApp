@@ -22,7 +22,7 @@ namespace DriveYOU_WebClient.Pages
         [BindProperty]
         public Models.LoginModel Model { get; set; }
         [BindProperty]
-        public Models.ErrorModel ErrorModel { get; set; }
+        public Models.MessageModel MessageModel { get; set; }
 
         private readonly ILogger<LoginModel> logger;
         private ApplicationDbContext context;
@@ -55,12 +55,11 @@ namespace DriveYOU_WebClient.Pages
                 }
                 else
                 {
-                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: Login or password is invalid");
+                    MessageModel = new Models.MessageModel("Authentication error", "Authentication error: Login or password is invalid");
                 }
             }
             return null;
         }
-
 
         private async Task<IActionResult> Authenticate(string userName)
         {
@@ -71,7 +70,8 @@ namespace DriveYOU_WebClient.Pages
             };
             ClaimsIdentity identity = new ClaimsIdentity(claims, "Cookies", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
-            return RedirectToPage("/Index");
+            return RedirectToPage("/MyAccount");
         }
+
     }
 }

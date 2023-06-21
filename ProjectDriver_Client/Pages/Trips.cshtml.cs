@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,7 +21,7 @@ namespace DriveYOU_WebClient.Pages
         [BindProperty]
         public List<ScheduledTripsWithUserModel> TripsWithUser { get; set; } = new List<ScheduledTripsWithUserModel>();
         [BindProperty]
-        public Models.ErrorModel ErrorModel { get; set; }
+        public Models.MessageModel MessageModel { get; set; }
 
         private readonly ILogger<TripsModel> logger;
         private ApplicationDbContext context;
@@ -29,11 +30,13 @@ namespace DriveYOU_WebClient.Pages
             logger = _logger;
             context = _context;
         }
-        public void OnGetTrips(FindTripModel findTripModel)
+        public IActionResult OnGetTrips(FindTripModel findTripModel)
         {
             if (ModelState.IsValid)
             {
-                TripsWithUser = context.ScheduledTrips.Where(t => t.From == findTripModel.From && t.To == findTripModel.To && EF.Functions.Like(t.Date.ToString(), $"%{findTripModel.Date.ToShortDateString()}%"))
+                if (User.Identity.IsAuthenticated)
+                {
+                    TripsWithUser = context.ScheduledTrips.Where(t => t.From == findTripModel.From && t.To == findTripModel.To && EF.Functions.Like(t.Date.ToString(), $"%{findTripModel.Date.ToShortDateString()}%"))
                     .Join(context.Users,
                         s => s.UserID,
                         u => u.ID,
@@ -50,14 +53,20 @@ namespace DriveYOU_WebClient.Pages
                               CarImage = u.CarImage,
                               ScheduledTrips = s
                           }).ToList();
+                }
+                else
+                {
+                    return RedirectToPage("Login");
+                }
+                
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+                MessageModel = new Models.MessageModel("Model error", "ModelState is not valid");
             }
+            return Page();
         }
 
-        //Get user trips
         public void OnGetMyTrips()
         {
             if (ModelState.IsValid)
@@ -101,16 +110,15 @@ namespace DriveYOU_WebClient.Pages
                 }
                 else
                 {
-                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                    MessageModel = new Models.MessageModel("Authentication error", "Authentication error: User not authenticated");
                 }
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+                MessageModel = new Models.MessageModel("Model error", "ModelState is not valid");
             }
         }
 
-        //Add new trip
         public void OnPostNewTrip(ScheduledTripsModel newTripModel)
         {
             if (ModelState.IsValid)
@@ -120,8 +128,8 @@ namespace DriveYOU_WebClient.Pages
                     var user = context.Users.Where(u => u.Number == long.Parse(User.Identity.Name) && u.CarModel != null && u.CarMark != null).FirstOrDefault();
                     if (user == null)
                     {
+                        MessageModel = new Models.MessageModel("Add trip exception", "Please, add car info first");
                         ModelState.AddModelError("", "Please, add car info first");
-                        //Redirect to user page
                     }
                     newTripModel.UserID = user.ID;
                     context.ScheduledTrips.Add(newTripModel);
@@ -129,17 +137,16 @@ namespace DriveYOU_WebClient.Pages
                 }
                 else
                 {
-                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                    MessageModel = new Models.MessageModel("Authentication error", "Authentication error: User not authenticated");
                 }
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+                MessageModel = new Models.MessageModel("Model error", "ModelState is not valid");
             }
         }
 
 
-        //Delete user trip by id
         public void OnGetDelTtip(int id)
         {
             if (ModelState.IsValid)
@@ -150,20 +157,19 @@ namespace DriveYOU_WebClient.Pages
                     var trip = context.ScheduledTrips.Where(i => i.ID == id && i.UserID == user.ID).FirstOrDefault();
                     if (trip == null)
                     {
-                        ModelState.AddModelError("", "Can't find trip for current user");
-                        //Show error
+                        MessageModel = new Models.MessageModel("Remove trip error", "Can't find trip for current user");
                     }
                     context.ScheduledTrips.Remove(trip);
                     context.SaveChangesAsync();
                 }
                 else
                 {
-                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                    MessageModel = new Models.MessageModel("Authentication error", "Authentication error: User not authenticated");
                 }
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+                MessageModel = new Models.MessageModel("Model error", "ModelState is not valid");
             }
         }
 
@@ -179,29 +185,30 @@ namespace DriveYOU_WebClient.Pages
                     var countSeats = context.ScheduledTrips.FirstOrDefault(s => s.ID == id);
                     if (countSubs >= countSeats.Seats)
                     {
-                        ModelState.AddModelError("", "Not enought seats");
-                        //Error
+                        MessageModel = new Models.MessageModel("Subscribe trip error", "Not enougth seats");
                     }
-                    SubscribedOnTripsModel model = new SubscribedOnTripsModel()
+                    else
                     {
-                        ScheduledTripsModelID = id,
-                        UserID = user.ID
-                    };
-                    context.SubscribedOnTrips.Add(model);
-                    context.SaveChanges();
+                        SubscribedOnTripsModel model = new SubscribedOnTripsModel()
+                        {
+                            ScheduledTripsModelID = id,
+                            UserID = user.ID
+                        };
+                        context.SubscribedOnTrips.Add(model);
+                        context.SaveChanges();
+                    }
                 }
                 else
                 {
-                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                    MessageModel = new Models.MessageModel("Authentication error", "Authentication error: User not authenticated");
                 }
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+                MessageModel = new Models.MessageModel("Model error", "ModelState is not valid");
             }
         }
 
-        //Unsubscribe from trip
         public void OnGetUnsubOnTrip(int id)
         {
             if (ModelState.IsValid)
@@ -219,17 +226,16 @@ namespace DriveYOU_WebClient.Pages
                 }
                 else
                 {
-                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                    MessageModel = new Models.MessageModel("Authentication error", "Authentication error: User not authenticated");
                 }
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+                MessageModel = new Models.MessageModel("Model error", "ModelState is not valid");
             }
         }
 
 
-        //User subscribed trips
         public void OnGetSubscribed()
         {
             if (ModelState.IsValid)
@@ -276,12 +282,12 @@ namespace DriveYOU_WebClient.Pages
                 }
                 else
                 {
-                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                    MessageModel = new Models.MessageModel("Authentication error", "Authentication error: User not authenticated");
                 }
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+                MessageModel = new Models.MessageModel("Model error", "ModelState is not valid");
             }
         }
     }

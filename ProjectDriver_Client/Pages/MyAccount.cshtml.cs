@@ -1,5 +1,8 @@
 using DriveYOU_WebClient.Context;
 using DriveYOU_WebClient.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +16,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DriveYOU_WebClient.Pages
 {
+    [RequireHttps]
     [BindProperties]
     public class MyAccountModel : PageModel
     {
@@ -26,7 +31,7 @@ namespace DriveYOU_WebClient.Pages
         public InputCarModel InputCarModel { get; set; }
         public int EndedTripsCount { get; set; }
         public IFormFile ImageFile { get; set; }
-        public Models.ErrorModel ErrorModel { get; set; }
+        public Models.MessageModel MessageModel { get; set; }
 
         private readonly ILogger<MyAccountModel> logger;
         private ApplicationDbContext context;
@@ -37,7 +42,7 @@ namespace DriveYOU_WebClient.Pages
             context = _context;
         }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
             if (ModelState.IsValid)
             {
@@ -45,21 +50,26 @@ namespace DriveYOU_WebClient.Pages
                 {
                     UserModel = context.Users.Where(u => u.Number == long.Parse(User.Identity.Name)).FirstOrDefault();
                     EndedTripsCount = context.EndedTrips.Where(t => t.UserID == UserModel.ID).Count();
-                    InputUserModel = new InputUserModel(UserModel);
-                    InputPasswordModel = new InputPasswordModel(UserModel);
-                    InputCarModel = new InputCarModel(UserModel);
-
                     TempUserModel = new User(UserModel);
+                    RefreshModels(UserModel);
                 }
                 else
                 {
-                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                    MessageModel = new Models.MessageModel("Authentication error", "Authentication error: User not authenticated");
+                    return RedirectToPage("Login");
                 }
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+                MessageModel = new Models.MessageModel("Model error", "ModelState is not valid");
             }
+            return Page();
+        }
+
+        public async Task<IActionResult> OnGetLogout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToPage("Index");
         }
 
         public void OnPostUser()
@@ -77,24 +87,24 @@ namespace DriveYOU_WebClient.Pages
                         }
                         InputUserModel.Photo = Convert.ToBase64String(imageData);
                     }
-                    if (InputUserModel.Photo == null)
+                    else
                     {
                         InputUserModel.Photo = TempUserModel.Photo;
                     }
                     SetProperties(InputUserModel);
                     UserModel = TempUserModel;
-
                     context.Users.Update(UserModel);
                     context.SaveChanges();
+                    RefreshModels(UserModel);
                 }
                 else
                 {
-                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                    MessageModel = new Models.MessageModel("Authentication error", "Authentication error: User not authenticated");
                 }
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+                MessageModel = new Models.MessageModel("Model error", "ModelState is not valid");
             }
         }
 
@@ -106,32 +116,34 @@ namespace DriveYOU_WebClient.Pages
             {
                 if (User.Identity.IsAuthenticated)
                 {
-                    if (InputPasswordModel.Password == TempUserModel.Password)
+                    if (InputPasswordModel.OldPassword == TempUserModel.Password)
                     {
-                        if (InputPasswordModel.NewPassword == InputPasswordModel.ConfirmPassword)
+                        if (InputPasswordModel.Password == InputPasswordModel.ConfirmPassword)
                         {
                             SetProperties(InputPasswordModel);
-                            context.Users.Update(TempUserModel);
+                            UserModel = TempUserModel;
+                            context.Users.Update(UserModel);
+                            context.SaveChanges();
+                            RefreshModels(UserModel);
                         }
                         else
                         {
-                            ErrorModel = new Models.ErrorModel("New password", "New password and confirm are not mathed");
+                            MessageModel = new Models.MessageModel("New password", "New password and confirm are not mathed");
                         }
-                        
                     }
                     else
                     {
-                        ErrorModel = new Models.ErrorModel("Data error", "Ivalid current password");
+                        MessageModel = new Models.MessageModel("Data error", "Ivalid current password");
                     }
                 }
                 else
                 {
-                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                    MessageModel = new Models.MessageModel("Authentication error", "Authentication error: User not authenticated");
                 }
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+                MessageModel = new Models.MessageModel("Model error", "ModelState is not valid");
             }
         }
 
@@ -149,25 +161,25 @@ namespace DriveYOU_WebClient.Pages
                             imageData = br.ReadBytes((int)ImageFile.Length);
                         }
                         InputCarModel.CarImage = Convert.ToBase64String(imageData);
-
-                        SetProperties(InputCarModel);
-                        UserModel = TempUserModel;
-                        context.Users.Update(UserModel);
-                        context.SaveChanges();
                     }
                     else
                     {
-                        ErrorModel = new Models.ErrorModel("Car error", "Add car error: Please add car image");
+                        InputCarModel.CarImage = TempUserModel.CarImage;
                     }
+                    SetProperties(InputCarModel);
+                    UserModel = TempUserModel;
+                    context.Users.Update(UserModel);
+                    context.SaveChanges();
+                    RefreshModels(UserModel);
                 }
                 else
                 {
-                    ErrorModel = new Models.ErrorModel("Authentication error", "Authentication error: User not authenticated");
+                    MessageModel = new Models.MessageModel("Authentication error", "Authentication error: User not authenticated");
                 }
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+                MessageModel = new Models.MessageModel("Model error", "ModelState is not valid");
             }
         }
 
@@ -197,6 +209,13 @@ namespace DriveYOU_WebClient.Pages
                 }
             }
         }
+
+        private void RefreshModels(User userModel)
+        {
+            InputUserModel = new InputUserModel(userModel);
+            InputPasswordModel = new InputPasswordModel(userModel);
+            InputCarModel = new InputCarModel(userModel);
+        }
     }
 
     public class InputUserModel
@@ -224,10 +243,10 @@ namespace DriveYOU_WebClient.Pages
         public InputPasswordModel() { }
         public InputPasswordModel(User baseModel)
         {
-            Password = baseModel.Password;
+            OldPassword = baseModel.Password;
         }
+        public string OldPassword { get; set; }
         public string Password { get; set; }
-        public string NewPassword { get; set; }
         public string ConfirmPassword { get; set; }
     }
 

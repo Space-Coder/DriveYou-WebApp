@@ -80,18 +80,17 @@
         }
     </div>
 </div>
-@if (Model.ErrorModel != null)
+@if (Model.MessageModel != null)
 {
     <div class="modal fade" id="ModalWindow" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Error</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">@Model.MessageModel.Caption</h5>
                     <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">@Model.ErrorModel.Caption</div>
+                <div class="modal-body">@Model.MessageModel.Message</div>
                 <div class="modal-footer">
-                    <p class="lead">@Model.ErrorModel.Message</p>
                     <button type="button" class="btn btn-primary" data-mdb-dismiss="modal">Close</button>
                 </div>
             </div>

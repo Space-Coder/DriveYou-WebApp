@@ -16,7 +16,7 @@ namespace DriveYOU_WebClient.Pages
         [BindProperty]
         public Models.RegisterModel Model { get; set; }
         [BindProperty]
-        public Models.ErrorModel ErrorModel { get; set; }
+        public Models.MessageModel MessageModel { get; set; }
 
         private readonly ILogger<RegisterModel> logger;
         private ApplicationDbContext context;
@@ -46,7 +46,7 @@ namespace DriveYOU_WebClient.Pages
                 if (newUser != null)
                 {
                     ModelState.AddModelError("Registration", "User already registered");
-                    ErrorModel = new Models.ErrorModel("Registration error", "Registration error: User already registered");
+                    MessageModel = new Models.MessageModel("Registration error", "Registration error: User already registered");
                 }
                 else
                 {
@@ -66,7 +66,7 @@ namespace DriveYOU_WebClient.Pages
             }
             else
             {
-                ErrorModel = new Models.ErrorModel("Model error", "ModelState is not valid");
+                MessageModel = new Models.MessageModel("Model error", "ModelState is not valid");
             }
             return null;
         }
