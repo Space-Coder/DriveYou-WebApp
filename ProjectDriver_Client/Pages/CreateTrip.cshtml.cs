@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -48,12 +49,12 @@ namespace DriveYOU_WebClient.Pages
                     }
                     else
                     {
-                        MessageModel = new Models.MessageModel("ArgumentNullException", "User not fount");
+                        MessageModel = new Models.MessageModel("ArgumentNullException", "User not found");
                     }
                 }
                 else
                 {
-                    MessageModel = new Models.MessageModel("ArgumentNullException", "User not fount");
+                    MessageModel = new Models.MessageModel("Authentication error", "Authentication error: User not authenticated");
                 }
             }
             return Page();
